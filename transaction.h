@@ -5,6 +5,7 @@
 #ifndef BRICKCHAIN_TRANSACTION_H
 #define BRICKCHAIN_TRANSACTION_H
 
+#include <chrono>
 #include <string>
 #include <cstdint>
 
@@ -20,6 +21,8 @@ public:
     void set_sender(std::string &);
     void set_receiver(std::string &);
     void set_content(std::string &);
+    void set_timestamp(int32_t &);
+    bool is_empty();
 
 private:
     std::string sender;

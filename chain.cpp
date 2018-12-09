@@ -2,9 +2,6 @@
 // Created by mark on 12/9/18.
 //
 
-#include <iostream>
-#include <fstream>
-#include <dirent.h>
 #include "chain.h"
 
 std::string Chain::build_hash(std::string guess) {
@@ -30,13 +27,19 @@ void Chain::calculate_nonce(Brick * brick) {
     }
 }
 
-Brick * Chain::get_previous_brick() {
-    return nullptr;
+Brick Chain::get_previous_brick() {
+    auto * brick = new Brick();
+    std::vector<std::string> bricks_filenames = get_bricks_filenames();
+    if (!bricks_filenames.empty()) {
+        std::sort(bricks_filenames.begin(), bricks_filenames.end());
+        load_brick(brick, bricks_filenames.back());
+    }
+    return * brick;
 }
 
 void Chain::add_transaction(Transaction & transaction) {
     std::string prev_hash;
-    if (get_previous_brick() == nullptr)
+    if (get_previous_brick().is_empty())
         prev_hash = DEFAULT_HASH;
     std::stringstream transaction_stream;
     std::stringstream brick_stream;
@@ -69,7 +72,30 @@ std::vector<std::string> Chain::get_bricks_filenames() {
     return brick_filenames;
 }
 
+void Chain::load_brick(Brick * brick, std::string & filename) {
+    std::string line;
+    std::vector<std::string> lines;
+    std::ifstream brick_file(filename);
+    if (brick_file.is_open()) {
+        while (std::getline(brick_file, line))
+            lines.push_back(line);
+        Transaction transaction;
+        brick->set_header_hash(lines.at(0));
+        brick->set_previous_hash(lines.at(1));
+        int32_t nonce = std::stoi(lines.at(2));
+        brick->set_nonce(nonce);
+        brick->set_bits(lines.at(3));
+        int32_t brick_timestamp = std::stoi(lines.at(4));
+        brick->set_timestamp(brick_timestamp);
+        transaction.set_sender(lines.at(5));
+        transaction.set_receiver(lines.at(6));
+        transaction.set_content(lines.at(7));
+        int32_t transaction_timestamp = std::stoi(lines.at(8));
+        transaction.set_timestamp(transaction_timestamp);
+        brick->set_transaction(transaction);
+    }
+}
+
 void Chain::save_brick(const Brick & brick) {
-    std::vector<std::string> bricks_filenames = get_bricks_filenames();
 
 }

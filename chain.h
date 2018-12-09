@@ -8,6 +8,11 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <fstream>
+#include <dirent.h>
 #include "picosha2.h"
 #include "brick.h"
 
@@ -19,13 +24,14 @@ public:
     static std::string build_hash(std::string);
     static bool check_nonce(std::string, int32_t, std::string);
     static void calculate_nonce(Brick *);
-    static Brick * get_previous_brick();
+    Brick get_previous_brick();
     void add_transaction(Transaction &);
     void set_bricks_path(std::string &);
     std::vector<std::string> get_bricks_filenames();
 
 private:
     void save_brick(const Brick &);
+    void load_brick(Brick *, std::string &);
     std::string bricks_path;
 };
 

@@ -3,6 +3,8 @@
 //
 
 #include <chrono>
+#include <string>
+#include <cstdint>
 #include "brick.h"
 
 Brick::Brick() {
@@ -57,4 +59,12 @@ void Brick::set_bits(std::string & _bits) {
 
 void Brick::set_transaction(Transaction & t) {
     transaction = t;
+}
+
+void Brick::set_timestamp(int32_t & t) {
+    timestamp = t;
+}
+
+bool Brick::is_empty() {
+    return transaction.is_empty() || header_hash.length() == 0;
 }

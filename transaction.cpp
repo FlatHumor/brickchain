@@ -2,7 +2,6 @@
 // Created by mark on 12/9/18.
 //
 
-#include <chrono>
 #include "transaction.h"
 
 Transaction::Transaction() {
@@ -46,4 +45,12 @@ void Transaction::set_receiver(std::string & _receiver) {
 
 void Transaction::set_content(std::string & _content) {
     content = _content;
+}
+
+void Transaction::set_timestamp(int32_t & t) {
+    timestamp = t;
+}
+
+bool Transaction::is_empty() {
+    return (sender.length() == 0 || receiver.length() == 0 || content.length() == 0);
 }

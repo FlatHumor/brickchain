@@ -5,8 +5,6 @@
 #ifndef BRICKCHAIN_BRICK_H
 #define BRICKCHAIN_BRICK_H
 
-#include <string>
-#include <cstdint>
 #include "transaction.h"
 
 
@@ -27,6 +25,8 @@ public:
     void set_nonce(int32_t &);
     void set_bits(std::string &);
     void set_transaction(Transaction &);
+    void set_timestamp(int32_t &);
+    bool is_empty();
 
 private:
     std::string header_hash;
