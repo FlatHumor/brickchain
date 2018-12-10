@@ -4,12 +4,18 @@
 
 #include "chain.h"
 
+Chain::Chain(std::string & path):
+    bricks_path(path) {}
+
 std::string Chain::build_hash(std::string guess) {
     return picosha2::hash256_hex_string(guess);
 }
 
-void Chain::set_bricks_path(std::string & path) {
-    bricks_path = path;
+std::string Chain::increment_filename(std::string & prev_filename) {
+    std::stringstream filename_stream;
+    int32_t prev_block_number = std::stoi(prev_filename);
+    filename_stream << ++prev_block_number << ".brick";
+    return filename_stream.str();
 }
 
 bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits) {
@@ -27,20 +33,26 @@ void Chain::calculate_nonce(Brick * brick) {
     }
 }
 
-Brick Chain::get_previous_brick() {
-    auto * brick = new Brick();
+void Chain::get_previous_brick(Brick * brick) {
     std::vector<std::string> bricks_filenames = get_bricks_filenames();
     if (!bricks_filenames.empty()) {
         std::sort(bricks_filenames.begin(), bricks_filenames.end());
         load_brick(brick, bricks_filenames.back());
     }
-    return * brick;
 }
 
 void Chain::add_transaction(Transaction & transaction) {
-    std::string prev_hash;
-    if (get_previous_brick().is_empty())
-        prev_hash = DEFAULT_HASH;
+    std::string prev_filename = "0.brick";
+    std::string curr_filename = "0.brick";
+    std::string prev_hash = DEFAULT_HASH;
+    auto * prev_brick = new Brick();
+    get_previous_brick(prev_brick);
+    if (!prev_brick->is_empty())
+    {
+        prev_filename = prev_brick->get_filename();
+        prev_hash = prev_brick->get_header_hash();
+        curr_filename = increment_filename(prev_filename);
+    }
     std::stringstream transaction_stream;
     std::stringstream brick_stream;
     transaction_stream << transaction.get_sender();
@@ -53,7 +65,11 @@ void Chain::add_transaction(Transaction & transaction) {
     std::string new_brick_header_hash = build_hash(brick_stream.str());
     brick->set_previous_hash(prev_hash);
     brick->set_header_hash(new_brick_header_hash);
+    brick->set_transaction(transaction);
     calculate_nonce(brick);
+    save_brick(* brick, curr_filename);
+    delete prev_brick;
+    delete brick;
 }
 
 std::vector<std::string> Chain::get_bricks_filenames() {
@@ -65,7 +81,9 @@ std::vector<std::string> Chain::get_bricks_filenames() {
         while ((entry = readdir(directory)) != nullptr)
         {
             std::string filename = entry->d_name;
-            if (&filename[filename.length() - 5] == "brick")
+            if (filename.length() < 6)
+                continue;
+            if (filename.substr(filename.length() - 6, filename.length() - 1) == ".brick")
                 brick_filenames.push_back(filename);
         }
     }
@@ -75,8 +93,10 @@ std::vector<std::string> Chain::get_bricks_filenames() {
 void Chain::load_brick(Brick * brick, std::string & filename) {
     std::string line;
     std::vector<std::string> lines;
-    std::ifstream brick_file(filename);
-    if (brick_file.is_open()) {
+    std::string brick_filename;
+    std::ifstream brick_file(brick_filename.append(bricks_path).append("/").append(filename));
+    if (brick_file.is_open())
+    {
         while (std::getline(brick_file, line))
             lines.push_back(line);
         Transaction transaction;
@@ -93,9 +113,26 @@ void Chain::load_brick(Brick * brick, std::string & filename) {
         int32_t transaction_timestamp = std::stoi(lines.at(8));
         transaction.set_timestamp(transaction_timestamp);
         brick->set_transaction(transaction);
+        brick->set_filename(filename);
     }
 }
 
-void Chain::save_brick(const Brick & brick) {
+void Chain::save_brick(Brick & brick, std::string & filename) {
+    std::string fullpath;
+    std::ofstream brick_file(fullpath.append(bricks_path).append("/").append(filename));
+    if (brick_file.is_open())
+    {
+        brick_file << brick.get_header_hash() << std::endl;
+        brick_file << brick.get_previous_hash() << std::endl;
+        brick_file << brick.get_nonce() << std::endl;
+        brick_file << brick.get_bits() << std::endl;
+        brick_file << brick.get_timestamp() << std::endl;
+        Transaction transaction = brick.get_transaction();
+        brick_file << transaction.get_sender() << std::endl;
+        brick_file << transaction.get_receiver() << std::endl;
+        brick_file << transaction.get_content() << std::endl;
+        brick_file << transaction.get_timestamp() << std::endl;
 
+        brick_file.close();
+    }
 }

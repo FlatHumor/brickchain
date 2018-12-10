@@ -41,6 +41,10 @@ int32_t Brick::get_timestamp() {
     return timestamp;
 }
 
+std::string Brick::get_filename() {
+    return filename;
+}
+
 void Brick::set_header_hash(std::string & _hash) {
     header_hash = _hash;
 }
@@ -63,6 +67,10 @@ void Brick::set_transaction(Transaction & t) {
 
 void Brick::set_timestamp(int32_t & t) {
     timestamp = t;
+}
+
+void Brick::set_filename(std::string & f) {
+    filename = f;
 }
 
 bool Brick::is_empty() {

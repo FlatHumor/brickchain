@@ -20,12 +20,14 @@ public:
     Transaction get_transaction();
     std::string get_version();
     int32_t get_timestamp();
+    std::string get_filename();
     void set_header_hash(std::string &);
     void set_previous_hash(std::string &);
     void set_nonce(int32_t &);
     void set_bits(std::string &);
     void set_transaction(Transaction &);
     void set_timestamp(int32_t &);
+    void set_filename(std::string &);
     bool is_empty();
 
 private:
@@ -35,6 +37,7 @@ private:
     std::string bits = "0000";
     Transaction transaction;
     int32_t timestamp;
+    std::string filename;
 };
 
 
