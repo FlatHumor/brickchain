@@ -40,7 +40,7 @@ bool Chain::validate() {
 void Chain::get_previous_brick(Brick * brick) {
     std::vector<std::string> bricks_filenames = get_bricks_filenames();
     if (!bricks_filenames.empty()) {
-        std::sort(bricks_filenames.begin(), bricks_filenames.end());
+
         load_brick(brick, bricks_filenames.back());
     }
 }
@@ -91,6 +91,7 @@ std::vector<std::string> Chain::get_bricks_filenames() {
                 brick_filenames.push_back(filename);
         }
     }
+    std::sort(brick_filenames.begin(), brick_filenames.end());
     return brick_filenames;
 }
 
