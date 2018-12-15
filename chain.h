@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <fstream>
+#include <regex>
 #include <dirent.h>
 #include "picosha2.h"
 #include "brick.h"

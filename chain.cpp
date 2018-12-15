@@ -28,9 +28,13 @@ bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits
 
 void Chain::calculate_nonce(Brick * brick) {
     while (!check_nonce(brick->get_header_hash(), brick->get_nonce(), brick->get_bits())) {
-        std::cout << "Nonce: " << brick->get_nonce() << std::endl;
+//        std::cout << "Nonce: " << brick->get_nonce() << std::endl;
         brick->get_nonce()++;
     }
+}
+
+bool Chain::validate() {
+    return true;
 }
 
 void Chain::get_previous_brick(Brick * brick) {
@@ -73,6 +77,7 @@ void Chain::add_transaction(Transaction & transaction) {
 }
 
 std::vector<std::string> Chain::get_bricks_filenames() {
+    const std::regex re("\\d+?\\.brick");
     DIR * directory;
     struct dirent * entry;
     std::vector<std::string> brick_filenames;
@@ -81,9 +86,8 @@ std::vector<std::string> Chain::get_bricks_filenames() {
         while ((entry = readdir(directory)) != nullptr)
         {
             std::string filename = entry->d_name;
-            if (filename.length() < 6)
-                continue;
-            if (filename.substr(filename.length() - 6, filename.length() - 1) == ".brick")
+            std::smatch match;
+            if (std::regex_search(filename, match, re))
                 brick_filenames.push_back(filename);
         }
     }
