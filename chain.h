@@ -24,7 +24,7 @@ class Chain
 public:
     explicit Chain(std::string &);
     void add_transaction(Transaction &);
-    bool validate();
+    bool is_valid();
 
 private:
     static std::string build_hash(std::string);
@@ -32,7 +32,7 @@ private:
     static void calculate_nonce(Brick *);
     void get_previous_brick(Brick *);
     void save_brick(Brick &, std::string &);
-    void load_brick(Brick *, std::string &);
+    void load_brick(Brick *, const std::string &);
     static std::string increment_filename(std::string &);
     const std::string bricks_path;
     std::vector<std::string> get_bricks_filenames();

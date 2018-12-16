@@ -13,11 +13,11 @@ Brick::Brick() {
     timestamp = (int32_t)ms.count();
 }
 
-std::string Brick::get_header_hash() {
+std::string Brick::get_header_hash() const {
     return header_hash;
 }
 
-std::string Brick::get_previous_hash() {
+std::string Brick::get_previous_hash() const {
     return previous_hash;
 }
 
@@ -69,10 +69,23 @@ void Brick::set_timestamp(int32_t & t) {
     timestamp = t;
 }
 
-void Brick::set_filename(std::string & f) {
+void Brick::set_filename(const std::string & f) {
     filename = f;
 }
 
 bool Brick::is_empty() {
     return transaction.is_empty() || header_hash.length() == 0;
+}
+
+std::ostream & operator<<(std::ostream & os, Brick & brick) {
+    os << "\n========== BRICK ===========" << std::endl
+       << "VERSION:\t\t" << brick.get_version() << std::endl
+       << "HEADER HASH:\t" << brick.get_header_hash() << std::endl
+       << "PREVIOUS_HASH:\t" << brick.get_previous_hash() << std::endl
+       << "NONCE:\t\t\t" << brick.get_nonce() << std::endl
+       << "BITS:\t\t\t" << brick.get_bits() << std::endl
+       << "TIMESTAMP:\t\t" << brick.get_timestamp() << std::endl
+       << "FILENAME:\t\t" << brick.get_filename() << std::endl;
+
+    return os;
 }

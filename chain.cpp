@@ -33,14 +33,31 @@ void Chain::calculate_nonce(Brick * brick) {
     }
 }
 
-bool Chain::validate() {
+bool Chain::is_valid() {
+    std::vector<std::string> bricks_filenames = get_bricks_filenames();
+    if (bricks_filenames.empty())
+        return true;
+    std::string previous_hash = DEFAULT_HASH;
+    auto * brick = new Brick();
+    for (const std::string & brick_filename : bricks_filenames)
+    {
+        load_brick(brick, brick_filename);
+        if (brick_filename == bricks_filenames.at(0)) {
+            previous_hash = brick->get_header_hash();
+            continue;
+        }
+        if (brick->get_previous_hash() != previous_hash) {
+            std::cout << * brick << std::endl;
+            return false;
+        }
+        previous_hash = brick->get_header_hash();
+    }
     return true;
 }
 
 void Chain::get_previous_brick(Brick * brick) {
     std::vector<std::string> bricks_filenames = get_bricks_filenames();
     if (!bricks_filenames.empty()) {
-
         load_brick(brick, bricks_filenames.back());
     }
 }
@@ -95,7 +112,7 @@ std::vector<std::string> Chain::get_bricks_filenames() {
     return brick_filenames;
 }
 
-void Chain::load_brick(Brick * brick, std::string & filename) {
+void Chain::load_brick(Brick * brick, const std::string & filename) {
     std::string line;
     std::vector<std::string> lines;
     std::string brick_filename;

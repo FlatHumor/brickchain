@@ -13,8 +13,8 @@ class Brick
     const std::string VERSION = "1.0";
 public:
     Brick();
-    std::string get_header_hash();
-    std::string get_previous_hash();
+    std::string get_header_hash() const;
+    std::string get_previous_hash() const;
     int32_t & get_nonce();
     std::string get_bits();
     Transaction get_transaction();
@@ -27,8 +27,9 @@ public:
     void set_bits(std::string &);
     void set_transaction(Transaction &);
     void set_timestamp(int32_t &);
-    void set_filename(std::string &);
+    void set_filename(const std::string &);
     bool is_empty();
+    friend std::ostream & operator<<(std::ostream &, Brick &);
 
 private:
     std::string header_hash;
