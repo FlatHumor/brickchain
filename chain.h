@@ -25,7 +25,6 @@ public:
     explicit Chain(std::string &);
     void add_transaction(Transaction &);
     bool is_valid();
-    static std::string timestamp_to_string(const int32_t &);
 
 private:
     static std::string build_hash(std::string);

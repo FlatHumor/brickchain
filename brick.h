@@ -19,14 +19,14 @@ public:
     std::string get_bits();
     Transaction get_transaction();
     std::string get_version();
-    int32_t get_timestamp();
+    long get_timestamp();
     std::string get_filename();
     void set_header_hash(std::string &);
     void set_previous_hash(std::string &);
     void set_nonce(int32_t &);
     void set_bits(std::string &);
     void set_transaction(Transaction &);
-    void set_timestamp(int32_t &);
+    void set_timestamp(long &);
     void set_filename(const std::string &);
     bool is_empty();
     friend std::ostream & operator<<(std::ostream &, Brick &);
@@ -37,7 +37,7 @@ private:
     int32_t nonce = 0;
     std::string bits = "0000";
     Transaction transaction;
-    int32_t timestamp;
+    long timestamp;
     std::string filename;
 };
 

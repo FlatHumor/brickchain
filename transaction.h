@@ -18,19 +18,20 @@ public:
     std::string get_sender();
     std::string get_receiver();
     std::string get_content();
-    int32_t get_timestamp();
+    long get_timestamp();
     void set_sender(std::string &);
     void set_receiver(std::string &);
     void set_content(std::string &);
-    void set_timestamp(int32_t &);
+    void set_timestamp(long &);
     bool is_empty();
+    static std::string timestamp_to_string(const long &);
     friend std::ostream & operator<<(std::ostream &, Transaction &);
 
 private:
     std::string sender;
     std::string receiver;
     std::string content;
-    int32_t timestamp;
+    long timestamp;
 };
 
 

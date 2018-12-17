@@ -10,7 +10,7 @@
 Brick::Brick() {
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch());
-    timestamp = (int32_t)ms.count();
+    timestamp = ms.count();
 }
 
 std::string Brick::get_header_hash() const {
@@ -37,7 +37,7 @@ std::string Brick::get_version() {
     return VERSION;
 }
 
-int32_t Brick::get_timestamp() {
+long Brick::get_timestamp() {
     return timestamp;
 }
 
@@ -65,7 +65,7 @@ void Brick::set_transaction(Transaction & t) {
     transaction = t;
 }
 
-void Brick::set_timestamp(int32_t & t) {
+void Brick::set_timestamp(long & t) {
     timestamp = t;
 }
 
@@ -84,7 +84,7 @@ std::ostream & operator<<(std::ostream & os, Brick & brick) {
        << "PREVIOUS_HASH:\t" << brick.get_previous_hash() << std::endl
        << "NONCE:\t\t\t" << brick.get_nonce() << std::endl
        << "BITS:\t\t\t" << brick.get_bits() << std::endl
-       << "TIMESTAMP:\t\t" << brick.get_timestamp() << std::endl
+       << "TIMESTAMP:\t\t" << Transaction::timestamp_to_string(brick.get_timestamp()) << std::endl
        << "FILENAME:\t\t" << brick.get_filename() << std::endl;
 
     return os;

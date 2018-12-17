@@ -134,12 +134,12 @@ void Chain::load_brick(Brick * brick, const std::string & filename) {
         int32_t nonce = std::stoi(lines.at(2));
         brick->set_nonce(nonce);
         brick->set_bits(lines.at(3));
-        int32_t brick_timestamp = std::stoi(lines.at(4));
+        long brick_timestamp = std::stol(lines.at(4));
         brick->set_timestamp(brick_timestamp);
         transaction.set_sender(lines.at(5));
         transaction.set_receiver(lines.at(6));
         transaction.set_content(lines.at(7));
-        int32_t transaction_timestamp = std::stoi(lines.at(8));
+        long transaction_timestamp = std::stol(lines.at(8));
         transaction.set_timestamp(transaction_timestamp);
         brick->set_transaction(transaction);
         brick->set_filename(filename);
@@ -164,8 +164,4 @@ void Chain::save_brick(Brick & brick, std::string & filename) {
 
         brick_file.close();
     }
-}
-
-std::string Chain::timestamp_to_string(const int32_t & timestamp) {
-    return "";
 }
