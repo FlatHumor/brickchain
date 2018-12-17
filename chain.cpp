@@ -28,7 +28,6 @@ bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits
 
 void Chain::calculate_nonce(Brick * brick) {
     while (!check_nonce(brick->get_header_hash(), brick->get_nonce(), brick->get_bits())) {
-//        std::cout << "Nonce: " << brick->get_nonce() << std::endl;
         brick->get_nonce()++;
     }
 }
@@ -38,19 +37,19 @@ bool Chain::is_valid() {
     if (bricks_filenames.empty())
         return true;
     std::string previous_hash = DEFAULT_HASH;
-    auto * brick = new Brick();
+    std::shared_ptr<Brick> s_brick(new Brick());
     for (const std::string & brick_filename : bricks_filenames)
     {
-        load_brick(brick, brick_filename);
+        load_brick(s_brick.get(), brick_filename);
         if (brick_filename == bricks_filenames.at(0)) {
-            previous_hash = brick->get_header_hash();
+            previous_hash = s_brick->get_header_hash();
             continue;
         }
-        if (brick->get_previous_hash() != previous_hash) {
-            std::cout << * brick << std::endl;
+        if (s_brick->get_previous_hash() != previous_hash) {
+            std::cout << * s_brick << std::endl;
             return false;
         }
-        previous_hash = brick->get_header_hash();
+        previous_hash = s_brick->get_header_hash();
     }
     return true;
 }
@@ -66,12 +65,12 @@ void Chain::add_transaction(Transaction & transaction) {
     std::string prev_filename = "0.brick";
     std::string curr_filename = "0.brick";
     std::string prev_hash = DEFAULT_HASH;
-    auto * prev_brick = new Brick();
-    get_previous_brick(prev_brick);
-    if (!prev_brick->is_empty())
+    std::shared_ptr<Brick> s_prev_brick(new Brick());
+    get_previous_brick(s_prev_brick.get());
+    if (!s_prev_brick->is_empty())
     {
-        prev_filename = prev_brick->get_filename();
-        prev_hash = prev_brick->get_header_hash();
+        prev_filename = s_prev_brick->get_filename();
+        prev_hash = s_prev_brick->get_header_hash();
         curr_filename = increment_filename(prev_filename);
     }
     std::stringstream transaction_stream;
@@ -81,16 +80,14 @@ void Chain::add_transaction(Transaction & transaction) {
     transaction_stream << transaction.get_content();
     transaction_stream << transaction.get_timestamp();
     std::string transaction_hash = build_hash(transaction_stream.str());
-    auto * brick = new Brick();
-    brick_stream << transaction_stream.str() << prev_hash << brick->get_timestamp();
+    std::shared_ptr<Brick> s_brick(new Brick());
+    brick_stream << transaction_stream.str() << prev_hash << s_brick->get_timestamp();
     std::string new_brick_header_hash = build_hash(brick_stream.str());
-    brick->set_previous_hash(prev_hash);
-    brick->set_header_hash(new_brick_header_hash);
-    brick->set_transaction(transaction);
-    calculate_nonce(brick);
-    save_brick(* brick, curr_filename);
-    delete prev_brick;
-    delete brick;
+    s_brick->set_previous_hash(prev_hash);
+    s_brick->set_header_hash(new_brick_header_hash);
+    s_brick->set_transaction(transaction);
+    calculate_nonce(s_brick.get());
+    save_brick(* s_brick, curr_filename);
 }
 
 std::vector<std::string> Chain::get_bricks_filenames() {
@@ -98,17 +95,27 @@ std::vector<std::string> Chain::get_bricks_filenames() {
     DIR * directory;
     struct dirent * entry;
     std::vector<std::string> brick_filenames;
+    int32_t brick_number;
+    std::vector<int32_t> brick_numbers;
     if ((directory = opendir(bricks_path.c_str())) != nullptr)
     {
         while ((entry = readdir(directory)) != nullptr)
         {
             std::string filename = entry->d_name;
             std::smatch match;
-            if (std::regex_search(filename, match, re))
-                brick_filenames.push_back(filename);
+            if (std::regex_search(filename, match, re)) {
+                brick_number = std::stoi(filename);
+                brick_numbers.push_back(brick_number);
+            }
         }
     }
-    std::sort(brick_filenames.begin(), brick_filenames.end());
+    std::sort(brick_numbers.begin(), brick_numbers.end());
+    for (int32_t brick_number : brick_numbers)
+    {
+        std::stringstream brick_stream;
+        brick_stream << brick_number << ".brick";
+        brick_filenames.push_back(brick_stream.str());
+    }
     return brick_filenames;
 }
 
@@ -157,4 +164,8 @@ void Chain::save_brick(Brick & brick, std::string & filename) {
 
         brick_file.close();
     }
+}
+
+std::string Chain::timestamp_to_string(const int32_t & timestamp) {
+    return "";
 }

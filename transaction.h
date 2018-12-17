@@ -24,6 +24,7 @@ public:
     void set_content(std::string &);
     void set_timestamp(int32_t &);
     bool is_empty();
+    friend std::ostream & operator<<(std::ostream &, Transaction &);
 
 private:
     std::string sender;

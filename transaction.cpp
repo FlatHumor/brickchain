@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by mark on 12/9/18.
 //
@@ -11,9 +13,9 @@ Transaction::Transaction() {
 }
 
 Transaction::Transaction(std::string s, std::string r, std::string c) {
-    sender = s;
-    receiver = r;
-    content = c;
+    sender = std::move(s);
+    receiver = std::move(r);
+    content = std::move(c);
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch());
     timestamp = (int32_t)ms.count();
@@ -53,4 +55,13 @@ void Transaction::set_timestamp(int32_t & t) {
 
 bool Transaction::is_empty() {
     return (sender.length() == 0 || receiver.length() == 0 || content.length() == 0);
+}
+
+std::ostream & operator<<(std::ostream & os, Transaction & transaction) {
+    os << "\n========== TRANSACTION ==========" << std::endl
+       << "SENDER:\t\t" << transaction.get_sender() << std::endl
+       << "RECEIVER:\t" << transaction.get_receiver() << std::endl
+       << "CONTENT:\t" << transaction.get_content() << std::endl
+       << "TIMESTAMP:\t" << transaction.get_timestamp() << std::endl;
+    return os;
 }
