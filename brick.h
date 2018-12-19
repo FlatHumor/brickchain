@@ -20,6 +20,7 @@ public:
     Transaction get_transaction();
     std::string get_version();
     long get_timestamp();
+    std::string get_guess();
     std::string get_filename();
     void set_header_hash(std::string &);
     void set_previous_hash(std::string &);

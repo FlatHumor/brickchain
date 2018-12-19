@@ -12,7 +12,8 @@ Transaction::Transaction() {
     timestamp = ms.count();
 }
 
-Transaction::Transaction(std::string s, std::string r, std::string c) {
+Transaction::Transaction(std::string s, std::string r, std::string c)
+{
     sender = std::move(s);
     receiver = std::move(r);
     content = std::move(c);
@@ -37,6 +38,12 @@ long Transaction::get_timestamp() {
     return timestamp;
 }
 
+std::string Transaction::get_guess() {
+    std::stringstream transaction_stream;
+    transaction_stream << sender << receiver << content << timestamp;
+    return transaction_stream.str();
+}
+
 void Transaction::set_sender(std::string & _sender) {
     sender = _sender;
 }
@@ -57,7 +64,8 @@ bool Transaction::is_empty() {
     return (sender.length() == 0 || receiver.length() == 0 || content.length() == 0);
 }
 
-std::string Transaction::timestamp_to_string(const long & timestamp) {
+std::string Transaction::timestamp_to_string(const long & timestamp)
+{
     using namespace std::chrono;
     milliseconds ms(timestamp);
     seconds sec = duration_cast<seconds>(ms);
@@ -66,7 +74,8 @@ std::string Transaction::timestamp_to_string(const long & timestamp) {
     return time_string;
 }
 
-std::ostream & operator<<(std::ostream & os, Transaction & transaction) {
+std::ostream & operator<<(std::ostream & os, Transaction & transaction)
+{
     os << "\n========== TRANSACTION ==========" << std::endl
        << "SENDER:\t\t" << transaction.get_sender() << std::endl
        << "RECEIVER:\t" << transaction.get_receiver() << std::endl

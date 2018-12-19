@@ -11,14 +11,16 @@ std::string Chain::build_hash(std::string guess) {
     return picosha2::hash256_hex_string(guess);
 }
 
-std::string Chain::increment_filename(std::string & prev_filename) {
+std::string Chain::increment_filename(std::string & prev_filename)
+{
     std::stringstream filename_stream;
     int32_t prev_block_number = std::stoi(prev_filename);
     filename_stream << ++prev_block_number << ".brick";
     return filename_stream.str();
 }
 
-bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits) {
+bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits)
+{
     std::stringstream proof_stream;
     proof_stream << header_hash << nonce;
     std::string hash = build_hash(proof_stream.str());
@@ -32,12 +34,16 @@ void Chain::calculate_nonce(Brick * brick) {
     }
 }
 
-bool Chain::is_valid() {
+bool Chain::is_valid()
+{
     std::vector<std::string> bricks_filenames = get_bricks_filenames();
     if (bricks_filenames.empty())
         return true;
     std::string previous_hash = DEFAULT_HASH;
     std::shared_ptr<Brick> s_brick(new Brick());
+    std::string transaction_guess;
+    std::string brick_guess;
+    std::string brick_hash;
     for (const std::string & brick_filename : bricks_filenames)
     {
         load_brick(s_brick.get(), brick_filename);
@@ -45,7 +51,18 @@ bool Chain::is_valid() {
             previous_hash = s_brick->get_header_hash();
             continue;
         }
+        transaction_guess = s_brick->get_transaction().get_guess();
+        brick_guess = s_brick->get_guess();
+        brick_hash = build_hash(brick_guess);
+        if (s_brick->get_header_hash() != brick_hash) {
+            std::cout << "VALIDATION FAILED ON HASH RECALCULATION" << std::endl;
+            std::cout << "EXISTING HASH:\t\t" << s_brick->get_header_hash() << std::endl;
+            std::cout << "RECALCULATED HASH:\t" << brick_hash << std::endl;
+            std::cout << * s_brick << std::endl;
+            return false;
+        }
         if (s_brick->get_previous_hash() != previous_hash) {
+            std::cout << "VALIDATION FAILED ON LINK CHECKING" << std::endl;
             std::cout << * s_brick << std::endl;
             return false;
         }
@@ -54,14 +71,16 @@ bool Chain::is_valid() {
     return true;
 }
 
-void Chain::get_previous_brick(Brick * brick) {
+void Chain::get_previous_brick(Brick * brick)
+{
     std::vector<std::string> bricks_filenames = get_bricks_filenames();
     if (!bricks_filenames.empty()) {
         load_brick(brick, bricks_filenames.back());
     }
 }
 
-void Chain::add_transaction(Transaction & transaction) {
+void Chain::add_transaction(Transaction & transaction)
+{
     std::string prev_filename = "0.brick";
     std::string curr_filename = "0.brick";
     std::string prev_hash = DEFAULT_HASH;
@@ -73,16 +92,8 @@ void Chain::add_transaction(Transaction & transaction) {
         prev_hash = s_prev_brick->get_header_hash();
         curr_filename = increment_filename(prev_filename);
     }
-    std::stringstream transaction_stream;
-    std::stringstream brick_stream;
-    transaction_stream << transaction.get_sender();
-    transaction_stream << transaction.get_receiver();
-    transaction_stream << transaction.get_content();
-    transaction_stream << transaction.get_timestamp();
-    std::string transaction_hash = build_hash(transaction_stream.str());
     std::shared_ptr<Brick> s_brick(new Brick());
-    brick_stream << transaction_stream.str() << prev_hash << s_brick->get_timestamp();
-    std::string new_brick_header_hash = build_hash(brick_stream.str());
+    std::string new_brick_header_hash = build_hash(s_brick->get_guess());
     s_brick->set_previous_hash(prev_hash);
     s_brick->set_header_hash(new_brick_header_hash);
     s_brick->set_transaction(transaction);
@@ -90,7 +101,8 @@ void Chain::add_transaction(Transaction & transaction) {
     save_brick(* s_brick, curr_filename);
 }
 
-std::vector<std::string> Chain::get_bricks_filenames() {
+std::vector<std::string> Chain::get_bricks_filenames()
+{
     const std::regex re("\\d+?\\.brick");
     DIR * directory;
     struct dirent * entry;
@@ -119,7 +131,8 @@ std::vector<std::string> Chain::get_bricks_filenames() {
     return brick_filenames;
 }
 
-void Chain::load_brick(Brick * brick, const std::string & filename) {
+void Chain::load_brick(Brick * brick, const std::string & filename)
+{
     std::string line;
     std::vector<std::string> lines;
     std::string brick_filename;
@@ -146,7 +159,8 @@ void Chain::load_brick(Brick * brick, const std::string & filename) {
     }
 }
 
-void Chain::save_brick(Brick & brick, std::string & filename) {
+void Chain::save_brick(Brick & brick, std::string & filename)
+{
     std::string fullpath;
     std::ofstream brick_file(fullpath.append(bricks_path).append("/").append(filename));
     if (brick_file.is_open())

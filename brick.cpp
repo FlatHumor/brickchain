@@ -41,6 +41,12 @@ long Brick::get_timestamp() {
     return timestamp;
 }
 
+std::string Brick::get_guess() {
+    std::stringstream brick_stream;
+    brick_stream << transaction.get_guess() << previous_hash << timestamp;
+    return brick_stream.str();
+}
+
 std::string Brick::get_filename() {
     return filename;
 }
@@ -77,7 +83,8 @@ bool Brick::is_empty() {
     return transaction.is_empty() || header_hash.length() == 0;
 }
 
-std::ostream & operator<<(std::ostream & os, Brick & brick) {
+std::ostream & operator<<(std::ostream & os, Brick & brick)
+{
     os << "\n========== BRICK ===========" << std::endl
        << "VERSION:\t\t" << brick.get_version() << std::endl
        << "HEADER HASH:\t" << brick.get_header_hash() << std::endl

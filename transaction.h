@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <string>
+#include <sstream>
 #include <cstdint>
 #include <iostream>
 
@@ -19,6 +20,7 @@ public:
     std::string get_receiver();
     std::string get_content();
     long get_timestamp();
+    std::string get_guess();
     void set_sender(std::string &);
     void set_receiver(std::string &);
     void set_content(std::string &);
