@@ -24,14 +24,15 @@ public:
     explicit Chain(std::string &);
     void add_transaction(Transaction &);
     bool is_valid();
+    void load_brick(Brick *, const std::string &);
+    static std::string build_hash(std::string);
 
 private:
-    static std::string build_hash(std::string);
-    static bool check_nonce(std::string, int32_t, std::string);
+
+    static bool check_nonce(const std::string &, const int32_t &, const std::string &);
     static void calculate_nonce(Brick *);
     void get_previous_brick(Brick *);
     void save_brick(Brick &, std::string &);
-    void load_brick(Brick *, const std::string &);
     static std::string increment_filename(std::string &);
     const std::string bricks_path;
     std::vector<std::string> get_bricks_filenames();

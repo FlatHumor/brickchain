@@ -19,7 +19,7 @@ std::string Chain::increment_filename(std::string & prev_filename)
     return filename_stream.str();
 }
 
-bool Chain::check_nonce(std::string header_hash, int32_t nonce, std::string bits)
+bool Chain::check_nonce(const std::string & header_hash, const int32_t & nonce, const std::string & bits)
 {
     std::stringstream proof_stream;
     proof_stream << header_hash << nonce;
@@ -54,15 +54,22 @@ bool Chain::is_valid()
         transaction_guess = s_brick->get_transaction().get_guess();
         brick_guess = s_brick->get_guess();
         brick_hash = build_hash(brick_guess);
-        if (s_brick->get_header_hash() != brick_hash) {
+        if (s_brick->get_header_hash() != brick_hash)
+        {
             std::cout << "VALIDATION FAILED ON HASH RECALCULATION" << std::endl;
             std::cout << "EXISTING HASH:\t\t" << s_brick->get_header_hash() << std::endl;
             std::cout << "RECALCULATED HASH:\t" << brick_hash << std::endl;
+            return false;
+        }
+        if (s_brick->get_previous_hash() != previous_hash)
+        {
+            std::cout << "VALIDATION FAILED ON LINK CHECKING" << std::endl;
             std::cout << * s_brick << std::endl;
             return false;
         }
-        if (s_brick->get_previous_hash() != previous_hash) {
-            std::cout << "VALIDATION FAILED ON LINK CHECKING" << std::endl;
+        if (!check_nonce(s_brick->get_header_hash(), s_brick->get_nonce(), s_brick->get_bits()))
+        {
+            std::cout << "VALIDATION FAILED ON NONCE CHECKING" << std::endl;
             std::cout << * s_brick << std::endl;
             return false;
         }
@@ -93,10 +100,10 @@ void Chain::add_transaction(Transaction & transaction)
         curr_filename = increment_filename(prev_filename);
     }
     std::shared_ptr<Brick> s_brick(new Brick());
-    std::string new_brick_header_hash = build_hash(s_brick->get_guess());
     s_brick->set_previous_hash(prev_hash);
-    s_brick->set_header_hash(new_brick_header_hash);
     s_brick->set_transaction(transaction);
+    std::string new_brick_header_hash = build_hash(s_brick->get_guess());
+    s_brick->set_header_hash(new_brick_header_hash);
     calculate_nonce(s_brick.get());
     save_brick(* s_brick, curr_filename);
 }

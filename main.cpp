@@ -15,6 +15,14 @@ int main(int argc, char * argv[]) {
         std::cout << "Chain is invalid" << std::endl;
     std::cout << transaction << std::endl;
 
-//    std::cout << "Hello, World!" << std::endl;
+//    std::string a = "1.brick";
+//    std::shared_ptr<Brick> s_brick(new Brick());
+//    chain.load_brick(s_brick.get(), a);
+//    std::cout << "raw string:    " << transaction.get_guess() << std::endl;
+//    std::cout << "loaded string: " << s_brick->get_transaction().get_guess() << std::endl;
+//    std::cout << "raw hash:    " << Chain::build_hash(transaction.get_guess()) << std::endl;
+//    std::cout << "loaded hash: " << Chain::build_hash(s_brick->get_transaction().get_guess()) << std::endl;
+//    std::cout << * s_brick << std::endl;
+
     return 0;
 }
