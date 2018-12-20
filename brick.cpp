@@ -86,13 +86,13 @@ bool Brick::is_empty() {
 std::ostream & operator<<(std::ostream & os, Brick & brick)
 {
     os << "\n========== BRICK ===========" << std::endl
-       << "VERSION:\t\t" << brick.get_version() << std::endl
-       << "HEADER HASH:\t" << brick.get_header_hash() << std::endl
+       << "VERSION:\t\t"     << brick.get_version() << std::endl
+       << "HEADER HASH:\t"   << brick.get_header_hash() << std::endl
        << "PREVIOUS_HASH:\t" << brick.get_previous_hash() << std::endl
-       << "NONCE:\t\t\t" << brick.get_nonce() << std::endl
-       << "BITS:\t\t\t" << brick.get_bits() << std::endl
-       << "TIMESTAMP:\t\t" << Transaction::timestamp_to_string(brick.get_timestamp()) << std::endl
-       << "FILENAME:\t\t" << brick.get_filename() << std::endl;
+       << "NONCE:\t\t\t"     << brick.get_nonce() << std::endl
+       << "BITS:\t\t\t"      << brick.get_bits() << std::endl
+       << "TIMESTAMP:\t\t"   << Transaction::timestamp_to_string(brick.get_timestamp()) << std::endl
+       << "FILENAME:\t\t"    << brick.get_filename() << std::endl;
 
     return os;
 }
