@@ -143,7 +143,10 @@ void Chain::load_brick(Brick * brick, const std::string & filename)
     std::string line;
     std::vector<std::string> lines;
     std::string brick_filename;
-    std::ifstream brick_file(brick_filename.append(bricks_path).append("/").append(filename));
+    std::ifstream brick_file(brick_filename
+        .append(bricks_path)
+        .append("/")
+        .append(filename));
     if (brick_file.is_open())
     {
         while (std::getline(brick_file, line))
@@ -169,7 +172,10 @@ void Chain::load_brick(Brick * brick, const std::string & filename)
 void Chain::save_brick(Brick & brick, std::string & filename)
 {
     std::string fullpath;
-    std::ofstream brick_file(fullpath.append(bricks_path).append("/").append(filename));
+    std::ofstream brick_file(fullpath
+        .append(bricks_path)
+        .append("/")
+        .append(filename));
     if (brick_file.is_open())
     {
         brick_file << brick.get_header_hash() << std::endl;
