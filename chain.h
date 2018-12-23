@@ -1,42 +1,25 @@
 //
-// Created by mark on 12/9/18.
+// Created by mark on 12/23/18.
 //
 
 #ifndef BRICKCHAIN_CHAIN_H
 #define BRICKCHAIN_CHAIN_H
 
-#include <string>
-#include <cstdint>
-#include <vector>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <regex>
-#include <dirent.h>
-#include "picosha2.h"
-#include "brick.h"
+#include "repository.h"
 
-
-class Chain
+class chain
 {
-    const std::string DEFAULT_HASH = "E175E69A8312A66A7011C1DCCFC2CF69823BC2C52F58CA516F60698F02DAA1D6";
 public:
-    explicit Chain(std::string &);
-    void add_transaction(Transaction &);
-    bool is_valid();
-    void load_brick(Brick *, const std::string &);
-    static std::string build_hash(std::string);
+    virtual void link_repository(repository *) = 0;
+    virtual void unlink_repository() = 0;
+    virtual void add_transaction(transaction &) = 0;
+    virtual bool is_valid() = 0;
 
 private:
-
-    static bool check_nonce(const std::string &, const int32_t &, const std::string &);
-    static void calculate_nonce(Brick *);
-    void get_previous_brick(Brick *);
-    void save_brick(Brick &, std::string &);
-    static std::string increment_filename(std::string &);
-    const std::string bricks_path;
-    std::vector<std::string> get_bricks_filenames();
+    virtual bool check_nonce(const std::string &, const int32_t &, const std::string &) = 0;
+    virtual void calculate_nonce(brick *) = 0;
+    virtual void get_previous_brick(brick *) = 0;
+    virtual std::string build_hash(std::string) = 0;
 };
-
 
 #endif //BRICKCHAIN_CHAIN_H

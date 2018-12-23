@@ -11,11 +11,11 @@
 #include <cstdint>
 #include <iostream>
 
-class Transaction
+class transaction
 {
 public:
-    Transaction();
-    Transaction(std::string, std::string, std::string);
+    transaction();
+    transaction(std::string, std::string, std::string);
     std::string get_sender();
     std::string get_receiver();
     std::string get_content();
@@ -27,7 +27,7 @@ public:
     void set_timestamp(long &);
     bool is_empty();
     static std::string timestamp_to_string(const long &);
-    friend std::ostream & operator<<(std::ostream &, Transaction &);
+    friend std::ostream & operator<<(std::ostream &, transaction &);
 
 private:
     std::string sender;
