@@ -21,22 +21,22 @@ std::string file_repository::build_filepath(int32_t & brick_identificator)
 
 std::vector<std::string> file_repository::get_brick_filenames()
 {
-	std::vector<std::string> brick_filenames;
-	std::string search_path = bricks_path;
-	if (bricks_path.back() != PATH_SEPARATOR)
-		search_path += PATH_SEPARATOR;
-	std::string path_pattern = search_path + "*" + brick_extension;
-	WIN32_FIND_DATA find_data;
-	HANDLE find_handler = FindFirstFile(path_pattern.c_str(), &find_data);
-	if (find_handler != INVALID_HANDLE_VALUE)
-	{
-		do {
-			if (!(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-				brick_filenames.push_back(find_data.cFileName);
-		} while (FindNextFile(find_handler, &find_data));
-		FindClose(find_handler);
-	}
-	return brick_filenames;
+    std::vector<std::string> brick_filenames;
+    std::string search_path = bricks_path;
+    if (bricks_path.back() != PATH_SEPARATOR)
+        search_path += PATH_SEPARATOR;
+    std::string path_pattern = search_path + "*" + brick_extension;
+    WIN32_FIND_DATA find_data;
+    HANDLE find_handler = FindFirstFile(path_pattern.c_str(), &find_data);
+    if (find_handler != INVALID_HANDLE_VALUE)
+    {
+        do {
+            if (!(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                brick_filenames.push_back(find_data.cFileName);
+        } while (FindNextFile(find_handler, &find_data));
+        FindClose(find_handler);
+    }
+    return brick_filenames;
 }
 
 #else
