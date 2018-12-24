@@ -38,10 +38,10 @@ std::vector<std::string> file_repository::get_brick_filenames()
         }
     }
     std::sort(brick_numbers.begin(), brick_numbers.end());
-    for (int32_t brick_number : brick_numbers)
+    for (int32_t & _brick_number : brick_numbers)
     {
         std::stringstream brick_stream;
-        brick_stream << brick_number << ".brick";
+        brick_stream << _brick_number << ".brick";
         brick_filenames.push_back(brick_stream.str());
     }
     return brick_filenames;

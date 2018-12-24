@@ -45,13 +45,16 @@ bool brick_chain::is_valid()
     for (auto & brick_number : bricks_numbers)
     {
         brick_repository->load_brick(s_brick.get(), brick_number);
+
         if (brick_number == bricks_numbers.at(0)) {
             previous_hash = s_brick->get_header_hash();
             continue;
         }
+
         transaction_guess = s_brick->get_transaction().get_guess();
         brick_guess = s_brick->get_guess();
         brick_hash = build_hash(brick_guess);
+
         if (s_brick->get_header_hash() != brick_hash)
         {
             std::cout << "VALIDATION FAILED ON HASH RECALCULATION" << std::endl;
@@ -59,18 +62,21 @@ bool brick_chain::is_valid()
             std::cout << "RECALCULATED HASH:\t" << brick_hash << std::endl;
             return false;
         }
+
         if (s_brick->get_previous_hash() != previous_hash)
         {
             std::cout << "VALIDATION FAILED ON LINK CHECKING" << std::endl;
             std::cout << * s_brick << std::endl;
             return false;
         }
+
         if (!check_nonce(s_brick->get_header_hash(), s_brick->get_nonce(), s_brick->get_bits()))
         {
             std::cout << "VALIDATION FAILED ON NONCE CHECKING" << std::endl;
             std::cout << * s_brick << std::endl;
             return false;
         }
+
         previous_hash = s_brick->get_header_hash();
     }
     return true;
