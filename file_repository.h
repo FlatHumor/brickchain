@@ -7,14 +7,17 @@
 
 #ifdef _WIN32
 #define    PATH_SEPARATOR '\\'
+#include <Windows.h>
 #else
 #define    PATH_SEPARATOR '/'
+#include <dirent.h>
 #endif
 
 #include "repository.h"
 #include <fstream>
 #include <regex>
-#include <dirent.h>
+
+
 
 class file_repository : public repository
 {
