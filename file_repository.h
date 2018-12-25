@@ -26,7 +26,6 @@ public:
     void load_brick(brick *, int32_t &) override;
     void save_brick(brick &, int32_t &) override;
     std::vector<int32_t> get_identificators() override;
-    void set_bricks_path(std::string);
 
 private:
     std::string build_filepath(int32_t &);

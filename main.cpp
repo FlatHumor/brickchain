@@ -15,9 +15,9 @@ int main(int argc, char * argv[])
     std::string brickchain_path = BRICKCHAIN_PATH;
     std::string content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     transaction transaction("sender", "receiver", content);
-    file_repository brick_repo = file_repository(brickchain_path);
+    std::shared_ptr<file_repository> brick_repo(new file_repository(brickchain_path));
     brick_chain brickchain;
-    brickchain.link_repository(& brick_repo);
+    brickchain.link_repository(brick_repo.get());
     brickchain.add_transaction(transaction);
     if (brickchain.is_valid())
         std::cout << "brick_chain valid" << std::endl;
