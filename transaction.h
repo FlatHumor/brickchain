@@ -15,7 +15,7 @@ class transaction
 {
 public:
     transaction();
-    transaction(std::string, std::string, std::string);
+    transaction(std::string &, std::string &, std::string &);
     std::string get_sender();
     std::string get_receiver();
     std::string get_content();

@@ -12,11 +12,11 @@ transaction::transaction() {
     timestamp = ms.count();
 }
 
-transaction::transaction(std::string s, std::string r, std::string c)
+transaction::transaction(std::string & s, std::string & r, std::string & c)
 {
-    sender = std::move(s);
-    receiver = std::move(r);
-    content = std::move(c);
+    sender = s;
+    receiver = r;
+    content = c;
     std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch());
     timestamp = ms.count();
