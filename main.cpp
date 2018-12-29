@@ -12,9 +12,26 @@
 
 int main(int argc, char * argv[]) 
 {
+    /*
+     * arg #1 path to store a chain
+     * arg #2 sender name
+     * arg #3 receiver name
+     * arg #4 content of transaction
+     * 
+     */
+
     std::string brickchain_path = BRICKCHAIN_PATH;
+    std::string sender = "sender";
+    std::string receiver = "receiver";
     std::string content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-    transaction transaction("sender", "receiver", content);
+    if (argc > 4) 
+    {
+        brickchain_path = std::string(argv[1]);
+        sender = std::string(argv[2]);
+        receiver = std::string(argv[3]);
+        content = std::string(argv[4]);
+    }
+    transaction transaction(sender, receiver, content);
     std::shared_ptr<file_repository> brick_repo(new file_repository(brickchain_path));
     brick_chain brickchain;
     brickchain.link_repository(brick_repo.get());
