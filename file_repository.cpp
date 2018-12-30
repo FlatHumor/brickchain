@@ -17,6 +17,18 @@ std::string file_repository::build_filepath(int32_t & brick_identificator)
     return filepath_stream.str();
 }
 
+std::string file_repository::escape_newline(std::string & text)
+{
+    std::string replace_char = "&ret;";
+    size_t return_char_pos = text.find('\r\n');
+    if (return_char_pos != std::string::npos)
+        text.replace(return_char_pos, 1, replace_char);
+    return_char_pos = text.find('\n');
+    if (return_char_pos != std::string::npos)
+        text.replace(return_char_pos, 1, replace_char);
+    return text;
+}
+
 #ifdef _WIN32
 
 std::vector<std::string> file_repository::get_brick_filenames()
@@ -93,18 +105,21 @@ void file_repository::load_brick(brick * empty_brick, int32_t & brick_identifica
         while (std::getline(brick_file, line))
             lines.push_back(line);
 
+        if (lines.size() == 0)
+            return;
+
         transaction transaction;
-        empty_brick->set_header_hash(lines.at(0));
-        empty_brick->set_previous_hash(lines.at(1));
-        int32_t nonce = std::stoi(lines.at(2));
+        empty_brick->set_header_hash(lines.at(1));
+        empty_brick->set_previous_hash(lines.at(2));
+        int32_t nonce = std::stoi(lines.at(3));
         empty_brick->set_nonce(nonce);
-        empty_brick->set_bits(lines.at(3));
-        long brick_timestamp = std::stol(lines.at(4));
+        empty_brick->set_bits(lines.at(4));
+        long brick_timestamp = std::stol(lines.at(5));
         empty_brick->set_timestamp(brick_timestamp);
-        transaction.set_sender(lines.at(5));
-        transaction.set_receiver(lines.at(6));
-        transaction.set_content(lines.at(7));
-        long transaction_timestamp = std::stol(lines.at(8));
+        transaction.set_sender(lines.at(6));
+        transaction.set_receiver(lines.at(7));
+        transaction.set_content(lines.at(8));
+        long transaction_timestamp = std::stol(lines.at(9));
         transaction.set_timestamp(transaction_timestamp);
         empty_brick->set_transaction(transaction);
         empty_brick->set_identificator(brick_identificator);
@@ -117,15 +132,17 @@ void file_repository::save_brick(brick & filled_brick, int32_t & brick_identific
     std::ofstream brick_file(brick_filename);
     if (brick_file.is_open())
     {
+        transaction transaction = filled_brick.get_transaction();
+        std::string escaped_content = escape_newline(transaction.get_content());
+        brick_file << filled_brick.get_identificator() << std::endl;
         brick_file << filled_brick.get_header_hash() << std::endl;
         brick_file << filled_brick.get_previous_hash() << std::endl;
         brick_file << filled_brick.get_nonce() << std::endl;
         brick_file << filled_brick.get_bits() << std::endl;
         brick_file << filled_brick.get_timestamp() << std::endl;
-        transaction transaction = filled_brick.get_transaction();
         brick_file << transaction.get_sender() << std::endl;
         brick_file << transaction.get_receiver() << std::endl;
-        brick_file << transaction.get_content() << std::endl;
+        brick_file << escaped_content << std::endl;
         brick_file << transaction.get_timestamp() << std::endl;
 
         brick_file.close();

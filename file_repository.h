@@ -32,6 +32,7 @@ private:
     std::vector<std::string> get_brick_filenames();
     const std::string bricks_path;
     const std::string brick_extension = ".brick";
+    std::string escape_newline(std::string &);
 };
 
 
